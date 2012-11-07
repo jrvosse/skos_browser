@@ -15,8 +15,8 @@
 	cpack:packageName "skos_browser" ;
 	dcterms:title "SKOS vocabulary browser" ;
 	cpack:author [ a foaf:Person ;
-		       foaf:name "@FOAFNAME@" ;
-		       foaf:mbox <@FOAFMBOX@> ;
+		       foaf:name "Michiel Hildebrand" ;
+		       foaf:mbox <f02be10c9354eb886121e2b9952f0b15c935cb90> ;
 		     ] ;
 	cpack:primaryRepository
 	    [ a cpack:GitRepository ;
