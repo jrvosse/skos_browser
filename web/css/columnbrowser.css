@@ -1,0 +1,81 @@
+.yui3-columnbrowser {
+	border-width: 1px;
+	border-style: solid;
+	border-color: #CCC;
+	
+	font-size: 12px;
+}
+.yui3-columnbrowser .hidden {
+	display: none;
+}
+.yui3-columnbrowser .loading {
+	padding-top: 20px;
+	background: url(loading.gif) no-repeat center center
+}
+.yui3-columnbrowser .columns-box {
+	height: 300px;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+.yui3-columnbrowser .columns-box.noscroll {
+	overflow-x: hidden;
+}
+.yui3-columnbrowser .columns {
+	height: 100%;
+}
+
+.yui3-columnbrowser .columns .yui3-resourcelist {
+	float: left;
+	height: 100%;
+	overflow-x: auto;
+	overflow-y: scroll;
+}
+.yui3-columnbrowser .yui3-resourcelist-content ul {
+	padding: 2px 0;
+	margin: 0;
+}
+.yui3-columnbrowser .resourcelist-item {
+	padding: 3px 5px 2px;
+	cursor: pointer;
+	overflow: hidden;
+}
+.yui3-columnbrowser .resourcelist-item .more {
+	float: right;
+}
+.yui3-columnbrowser .resourcelist-item.selected {
+	background-color: #DDD;
+}
+.yui3-columnbrowser .yui3-resourcelist.selected .resourcelist-item.selected {
+	background-color: #3875D7;
+	color: #FFF;
+}
+.yui3-columnbrowser .pagination {
+	border-color:#CCCCCC;
+	border-style:solid;
+	border-width:1px 0 0;
+	text-align:center;
+}
+.yui3-columnbrowser .pagination .page-label {
+	padding: 0 10px;
+}
+.yui3-columnbrowser .pagination a.disabled {
+	color: #CCC;
+}
+
+.yui3-columnbrowser .search,
+.yui3-columnbrowser select {
+	border-color:#CCC;
+	border-style:solid;
+	border-width:0 0 1px;
+}
+.yui3-columnbrowser .search {
+	padding: 0 2px
+}
+.yui3-columnbrowser select {
+	width: 100%;
+}
+.yui3-columnbrowser .search input {
+	width: 100%;
+	border: none;
+	background: url("search_bg_enabled.png") no-repeat right 60% #FFFFFF;
+}
