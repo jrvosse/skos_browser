@@ -6,6 +6,7 @@
 :- use_module(library(http/http_path)).
 :- use_module(library(http/html_head)).
 :- use_module(library(yui3_beta)).
+:- use_module(library(semweb/rdf_db)).
 :- use_module(library(semweb/rdf_label)).
 
 :- http_handler(skosbrowser(.), http_skos_browser, []).
