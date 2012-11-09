@@ -6,7 +6,7 @@
 /** <module> SKOS vocabulary browser
 */
 
-http:location(skosbrowser, cliopatria(skos/browser), []).
+http:location(skosbrowser, cliopatria(skos/browse), []).
 http:location(skosapi, cliopatria(skos/api), []).
 
 :- use_module(api(skos_concepts)).
