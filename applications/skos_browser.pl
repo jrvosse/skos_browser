@@ -182,6 +182,7 @@ html_label_list([L|Ls]) -->
 	html(span(class(label), [L,', '])),
 	html_label_list(Ls).
 
+html_concept_list([]) --> !.
 html_concept_list([concept(URI, Label)]) --> !,
 	resource_link(URI, Label).
 html_concept_list([concept(URI, Label)|Cs]) -->
