@@ -12,4 +12,5 @@ http:location(skosapi, cliopatria(skos/api), []).
 :- use_module(api(skos_concepts)).
 :- use_module(applications(skos_browser)).
 
-:- rdf_attach_library(vocs).
+% I rather have the application do stuff like this:
+% :- rdf_attach_library(vocs). 
