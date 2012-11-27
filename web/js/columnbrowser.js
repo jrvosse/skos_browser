@@ -183,23 +183,27 @@ YUI.add('columnbrowser', function(Y) {
 		_createColumnList : function(index) {
 			var columns = this.get("columns"),
 				previous = columns[index-1]||{},
-				column = columns[index];
+				column = columns[index],
+				repeat = column.repeat||previous.repeat;
+			
+			// column properties are defined or inherited from previous column				
+			column.repeat = repeat;
+			column.label = column.label || (repeat&&previous.label);
+			column.request = column.request || (repeat&&previous.request);
+			column.params = column.params||(repeat&&previous.params);
+			column.options = column.options||(repeat&&previous.options);
+			column.formatter = column.formatter||(repeat&&previous.formatter);
 	
 			var cfg = {
 				width: this.get("columnWidth"),
 				maxNumberItems: this.get("maxNumberItems"),
 				minQueryLength: this.get("minQueryLength"),
-				queryDelay: this.get("queryDelay")
+				queryDelay: this.get("queryDelay"),
+				datasource: this.get("datasource"),
+				request: column.request,
+				params: column.params,
+				options: column.options
 			};
-
-			column.repeat = column.repeat||previous.repeat;
-			column.label = column.label || (column.repeat&&previous.label);
-				
-			// column properties are defined or inherited from previous column			
-			cfg.datasource = this.get("datasource");
-			cfg.request = column.request||(column.repeat&&previous.request);	
-			cfg.params = column.params||(column.repeat&&previous.params);
-			cfg.options = column.options||(column.repeat&&previous.options);
 			
 			var list = new Y.mazzle.ResourceList(cfg);
 			if(column.formatter) {
