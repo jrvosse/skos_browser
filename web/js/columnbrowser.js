@@ -50,6 +50,9 @@ YUI.add('columnbrowser', function(Y) {
 		},
 		selected: {
 			value: null
+		},
+		autoLoad: {
+			value: true
 		}
 	};
 
@@ -110,7 +113,7 @@ YUI.add('columnbrowser', function(Y) {
 				// update the active column
 				this._updateContentSize();
 				//columns[activeIndex].list._node.scrollIntoView();
-			} else {
+			} else if(this.get("autoLoad")) {
 				this._activeIndex = 0;
 				this._updateColumn(0);
 			}
