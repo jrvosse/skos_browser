@@ -155,6 +155,7 @@ YUI.add('columnbrowser', function(Y) {
 				if(oItem.hasNext) {	
 					this._updateColumn(next, this.itemId(oItem));
 				} else {
+					this._activeIndex = index;
 					this.syncUI();
 				}
 			}
