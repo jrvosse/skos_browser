@@ -75,15 +75,19 @@ http_concepts(Request) :-
 				 description('maximum number of results returned')]),
 			  query(Query,
 				[optional(true),
-				 description('keyword query to filter the results by')])
+				 description('keyword query to filter the results by')]),
+			  graph(Graphs,
+				[zero_or_more,
+				 description('Named graph to restrict the concepts by')
+				])
 			]),
-
+	%@TBD use Graphs in concept_of
 	findall(Label-Concept, concept_of(Type, Parent, Query, Concept, Label), Concepts),
 	sort(Concepts, Sorted),
 	length(Sorted, Total),
 	list_offset(Sorted, Offset, OffsetResults),
 	list_limit(OffsetResults, Limit, LimitResults, _),
-	maplist(concept_result, LimitResults, JSONResults),
+	concept_results(LimitResults, Graphs, JSONResults),
 	reply_json(json([parent=Parent,
 			 offset=Offset,
 			 limit=Limit,
@@ -178,17 +182,22 @@ conceptscheme_result(Label-URI, json(JSON)) :-
 conceptscheme_result_property(Key, URI, Value) :-
 	catch(cliopatria:conceptscheme_property(Key, URI, Value), _, fail).
 
-%%	concept_result(+Pair:label-uri, -JSON_Object)
+%%	concept_results(+Pair:label-uri, +Graphs -JSON_Object)
 
-concept_result(Label-URI, json(JSON)) :-
+concept_results([], _, []).
+concept_results([C|Cs], Graphs, [O|Os]) :-
+	concept_result(C, Graphs, O),
+	concept_results(Cs, Graphs, Os).
+
+concept_result(Label-URI, Graphs, json(JSON)) :-
 	JSON = [id=URI, label=Label|More],
-	findall(Key= Value, concept_result_property(Key, URI, Value), More).
+	findall(Key= Value, concept_result_property(Key, URI, Graphs, Value), More).
 
-concept_result_property(hasNext, URI, Boolean) :-
+concept_result_property(hasNext, URI, _, Boolean) :-
 	has_narrower(URI, Boolean).
 
-concept_result_property(Key, URI, Value) :-
-	catch(cliopatria:concept_property(Key, URI, Value), _, fail).
+concept_result_property(Key, URI, Graphs, Value) :-
+	catch(cliopatria:concept_property(Key, URI, Graphs, Value), _, fail).
 
 
 %%	has_narrower(+Concept, -Boolean)
