@@ -37,6 +37,10 @@ YUI.add('resourcelist', function(Y) {
 			value: 0.3,
 			validator: Lang.isNumber
 		},
+		searchEnabled: {
+			value: true,
+			validator: Lang.isBoolean
+		},
 		page: {
 			value: 0,
 			validator: Lang.isNumber
@@ -176,10 +180,12 @@ YUI.add('resourcelist', function(Y) {
 		},
 		
 		_renderSearch : function() {
-			var search = this.get("contentBox")
-				.appendChild(Node.create('<div class="search"></div>'))
-				.appendChild(Node.create('<input type="text" />'));
-			search.on("valuechange", this._valueChangeHandler, this);	
+			if(this.get("searchEnabled")) {
+				var search = this.get("contentBox")
+					.appendChild(Node.create('<div class="search"></div>'))
+					.appendChild(Node.create('<input type="text" />'));
+				search.on("valuechange", this._valueChangeHandler, this);	
+			}
 		},
 		
 		/**
@@ -247,11 +253,13 @@ YUI.add('resourcelist', function(Y) {
 			var i = 0;	
 			for (i; i < numberItems; i++) {
 				var oResource = resources[i],
+					cssClass = oResource["class"]||'',
 					HTML = this.formatItem(oResource),
 					oItem = listItems[i],
-					elItem = oItem.el;
+					elItem = oItem.el
 
 				oItem.resource = oResource;
+				elItem.addClass(cssClass);
 				elItem.set("innerHTML", HTML);
 				elItem.setStyle("display", "block");
 			}
@@ -260,6 +268,7 @@ YUI.add('resourcelist', function(Y) {
 			for (i; i < listItems.length; i++) {
 				var oItem = listItems[i],
 					elItem = oItem.el;
+				elItem.set('className',ResourceList.ITEM_CLASS); // reset all CSS classes
 				if(elItem.getStyle("display")=="none") {
 					return;
 				} else {
@@ -422,11 +431,18 @@ YUI.add('resourcelist', function(Y) {
 		},
 		
 		formatItem : function(oResource) {
-		        var label = oResource["label"],
-		            uri   = oResource["id"],
-		            value = (label&&!Y.Lang.isObject(label)) ? label : uri;
+		        var label = oResource.label,
+		            uri   = oResource.id,
+		            value = (label&&!Y.Lang.isObject(label)) ? label : uri,
+					hasNext = oResource.hasNext,
+					count = oResource.count;
+					 
 			var HTML = "";
-			if(oResource.hasNext) { HTML += "<div class='more'>&gt;</div>"; }
+			if(count) {
+				HTML += "<div class='more count'>"+count+"</div>";
+			} else if(hasNext) {	
+				HTML += "<div class='more'>&gt;</div>";
+			}
 			HTML += "<div class='resourcelist-item-value' title='"+uri+"'>"+value+"</div>";
 			return HTML;
 		}

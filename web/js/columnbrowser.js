@@ -36,6 +36,10 @@ YUI.add('columnbrowser', function(Y) {
 			value: 200,
 			validator: Lang.isNumber
 		},
+		searchEnabled: {
+			value: true,
+			validator: Lang.isBoolean
+		},
 		maxNumberItems: {
 			value: 100,
 			validator: Lang.isNumber
@@ -103,9 +107,9 @@ YUI.add('columnbrowser', function(Y) {
 							list.get("boundingBox").removeClass("selected");
 						}
 						if(i<=activeIndex) {
-							list.set("visible", true);
+							list.show();
 						} else {
-							list.set("visible", false);
+							list.hide();
 						}
 					}
 				}
@@ -199,6 +203,7 @@ YUI.add('columnbrowser', function(Y) {
 	
 			var cfg = {
 				width: this.get("columnWidth"),
+				searchEnabled: this.get("searchEnabled"),
 				maxNumberItems: this.get("maxNumberItems"),
 				minQueryLength: this.get("minQueryLength"),
 				queryDelay: this.get("queryDelay"),
@@ -238,17 +243,6 @@ YUI.add('columnbrowser', function(Y) {
 			
 			content.setStyle("width", width+"px");
 			content.get("parentNode").removeClass("noscroll");
-			this._updateColumnsSize();
-		},
-		
-		_updateColumnsSize : function() {
-			var columns = this.get("columns"),
-				height = this.columnsNode.get("offsetHeight");
-			for (var i=0; i < columns.length; i++) {
-				if(columns[i].list) {
-					columns[i].list.set("height", height+"px");
-				}
-			}
 		}
 				
 	}); 

@@ -63,7 +63,7 @@ skos_api_datasource(DS) -->
 	yui3_plug(DS,
 		  'Y.Plugin.DataSourceJSONSchema',
 		  {schema: {resultListLocator: results,
-			    resultFields: [id, label, hasNext, matches, scheme],
+			    resultFields: [id, label, hasNext, count, class, matches, scheme],
 			    metaFields: {totalNumberOfResults:totalNumberOfResults}
 			   }
 		  }),

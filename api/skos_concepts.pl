@@ -6,13 +6,16 @@
 :- use_module(library(http/html_write)).
 :- use_module(library(http/http_json)).
 :- use_module(library(http/json)).
-:- use_module(library(http/json_convert)).
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(semweb/rdf_label)).
 
 
 :- http_handler(skosapi(conceptschemes), http_conceptschemes, []).
 :- http_handler(skosapi(concepts), http_concepts, []).
+
+:- multifile
+	conceptscheme_property/3,
+	concept_property/3.
 
 %%	http_concept_schemes(+Request)
 %
@@ -30,19 +33,16 @@ http_conceptschemes(Request) :-
 				[optional(true),
 				 description('keyword query to filter the results by')])
 			]),
-	ConceptScheme = concept(Concept, Label, true),
-	findall(ConceptScheme, concept_scheme(Query, Concept, Label), Cs),
-	length(Cs, Total),
-	list_offset(Cs, Offset, OffsetResults),
+	findall(Label-Concept, concept_scheme(Query, Concept, Label), Concepts),
+	sort(Concepts, Sorted),
+	length(Sorted, Total),
+	list_offset(Sorted, Offset, OffsetResults),
 	list_limit(OffsetResults, Limit, LimitResults, _),
-	prolog_to_json(LimitResults, JSONResults),
+	maplist(conceptscheme_result, LimitResults, JSONResults),
 	reply_json(json([offset=Offset,
 			 limit=Limit,
 			 totalNumberOfResults=Total,
 			 results=JSONResults])).
-
-:- json_object
-	concept(id:atom, label:atom, hasNext:boolean).
 
 concept_scheme(Query, C, Label) :-
 	var(Query),
@@ -77,41 +77,39 @@ http_concepts(Request) :-
 				[optional(true),
 				 description('keyword query to filter the results by')])
 			]),
-	C = concept(Concept, Label, HasNarrower),
-	findall(C, concept(Type, Parent, Query, Concept, Label, HasNarrower), Cs0),
-	sort(Cs0, Cs),
-	term_sort_by_arg(Cs, 2, Sorted),
+
+	findall(Label-Concept, concept_of(Type, Parent, Query, Concept, Label), Concepts),
+	sort(Concepts, Sorted),
 	length(Sorted, Total),
 	list_offset(Sorted, Offset, OffsetResults),
 	list_limit(OffsetResults, Limit, LimitResults, _),
-	prolog_to_json(LimitResults, JSONResults),
+	maplist(concept_result, LimitResults, JSONResults),
 	reply_json(json([parent=Parent,
 			 offset=Offset,
 			 limit=Limit,
 			 totalNumberOfResults=Total,
 			 results=JSONResults])).
 
-concept(Type, Parent, Query, Concept, Label, HasNarrower) :-
+concept_of(Type, Parent, Query, Concept, Label) :-
 	var(Query),
 	!,
-	concept_(Type, Parent, Concept),
-	has_narrower(Concept, HasNarrower),
+	concept(Type, Parent, Concept),
 	rdf_display_label(Concept, Label).
-concept(Type, Parent, Query, Concept, Label, HasNarrower) :-
-	concept_(Type, Parent, Concept),
-	once(label_prefix(Query, Concept, Lit)),
-	literal_text(Lit, Label),
-	has_narrower(Concept, HasNarrower).
 
-concept_(inscheme, ConceptScheme, Concept) :- !,
+concept_of(Type, Parent, Query, Concept, Label) :-
+	concept(Type, Parent, Concept),
+	once(label_prefix(Query, Concept, Lit)),
+	literal_text(Lit, Label).
+
+concept(inscheme, ConceptScheme, Concept) :- !,
 	inscheme(ConceptScheme, Concept).
-concept_(topconcept, ConceptScheme, Concept) :- !,
+concept(topconcept, ConceptScheme, Concept) :- !,
 	top_concept(ConceptScheme, Concept).
-concept_(child, Parent, Concept) :-
+concept(child, Parent, Concept) :-
 	narrower_concept(Parent, Concept).
-concept_(descendant, Parent, Concept) :-
+concept(descendant, Parent, Concept) :-
 	descendant(Parent, Concept).
-concept_(related, Parent, Concept) :-
+concept(related, Parent, Concept) :-
 	related_concept(Parent, Concept).
 
 %%	inscheme(+ConceptScheme, -Concept)
@@ -164,19 +162,46 @@ related_concept(Concept, Related) :-
 	rdf_has(Related, skos:related, Concept),
 	\+ rdf_has(Concept, skos:related, Related).
 
+
+
+
+		 /*******************************
+		 *	  Concept JSON		*
+		 *******************************/
+
+%%	conceptscheme_result(+Pair:label-uri, -JSON_Object)
+
+conceptscheme_result(Label-URI, json(JSON)) :-
+	JSON = [id=URI, label=Label, hasNext=true|More],
+	findall(Key= Value, conceptscheme_result_property(Key, URI, Value), More).
+
+conceptscheme_result_property(Key, URI, Value) :-
+	catch(cliopatria:conceptscheme_property(Key, URI, Value), _, fail).
+
+%%	concept_result(+Pair:label-uri, -JSON_Object)
+
+concept_result(Label-URI, json(JSON)) :-
+	JSON = [id=URI, label=Label|More],
+	findall(Key= Value, concept_result_property(Key, URI, Value), More).
+
+concept_result_property(hasNext, URI, Boolean) :-
+	has_narrower(URI, Boolean).
+
+concept_result_property(Key, URI, Value) :-
+	catch(cliopatria:concept_property(Key, URI, Value), _, fail).
+
+
 %%	has_narrower(+Concept, -Boolean)
 %
 %	Boolean is true when concept has a skos:narrower concept.
 
-has_narrower(Concept, true) :-
-	rdf_has(Concept, skos:narrower, _),
-	!.
-has_narrower(Concept, true) :-
+has_narrower(Concept, @true) :-
 	rdf_has(_, skos:broader, Concept),
 	!.
-has_narrower(_, false).
-
-
+has_narrower(Concept, @true) :-
+	rdf_has(Concept, skos:narrower, _),
+	!.
+has_narrower(_, @false).
 
 
 		 /*******************************

@@ -2,7 +2,7 @@
 	border-width: 1px;
 	border-style: solid;
 	border-color: #CCC;
-	
+	height: 300px;
 	font-size: 12px;
 }
 .yui3-columnbrowser .hidden {
@@ -12,10 +12,12 @@
 	padding-top: 20px;
 	background: url(loading.gif) no-repeat center center
 }
+.yui3-columnbrowser-content {
+	height: 100%;
+}
 .yui3-columnbrowser .columns-box {
-	height: 300px;
+	height: 100%;
 	overflow-x: auto;
-	overflow-y: hidden;
 }
 .yui3-columnbrowser .columns-box.noscroll {
 	overflow-x: hidden;
@@ -30,6 +32,9 @@
 	overflow-x: auto;
 	overflow-y: scroll;
 }
+.yui3-columnbrowser .yui3-resourcelist-hidden {
+	display: none;
+}
 .yui3-columnbrowser .yui3-resourcelist-content ul {
 	padding: 2px 0;
 	margin: 0;
@@ -42,11 +47,22 @@
 .yui3-columnbrowser .resourcelist-item .more {
 	float: right;
 }
+.yui3-columnbrowser .resourcelist-item .count {
+	float: right;
+	background-color: #98A9C6;
+	color: white;
+	padding: 2px;
+	border-radius: 4px;
+}
 .yui3-columnbrowser .resourcelist-item.selected {
-	background-color: #DDD;
+	background-color: #EEE;
+}
+.yui3-columnbrowser .resourcelist-item.selected .count {
+	background-color: #FFF;
+	color: #98A9C6;
 }
 .yui3-columnbrowser .yui3-resourcelist.selected .resourcelist-item.selected {
-	background-color: #3875D7;
+	background-color: #98A9C6;
 	color: #FFF;
 }
 .yui3-columnbrowser .pagination {
