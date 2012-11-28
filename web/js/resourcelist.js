@@ -424,7 +424,14 @@ YUI.add('resourcelist', function(Y) {
 			var paramString = "";
 			for(var key in params) {
 				if(params[key]) {
-					paramString += key+"="+encodeURIComponent(params[key])+"&";
+					var v = params[key];
+					if(Y.Lang.isArray(v)) {
+						for (var i=0; i < v.length; i++) {
+							paramString += key+"="+encodeURIComponent(v[i])+"&";
+						};
+					} else {
+						paramString += key+"="+encodeURIComponent(params[key])+"&";
+					}	
 				}
 			}
 			return paramString;

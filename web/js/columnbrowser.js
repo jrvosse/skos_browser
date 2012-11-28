@@ -135,6 +135,24 @@ YUI.add('columnbrowser', function(Y) {
 			return label;
 		},
 		
+		updateAll : function(params) {
+			var columns = this.get("columns"),
+				activeIndex = this._activeIndex;
+			for (var i=0; i<=activeIndex; i++) {
+				var column = columns[i];
+				if(column.list) {
+					if(params) {
+						listParams = column.list.get("params");
+						for(var key in params) {
+							listParams[key] = params[key];
+						}
+						column.list.set("params", listParams);
+					}
+					column.list.updateContent();
+				}	
+			}
+		},
+		
 		/**
 		* Handles the selection of a resource list item.
 		* Fires the itemSelect event
