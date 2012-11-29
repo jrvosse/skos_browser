@@ -135,20 +135,28 @@ YUI.add('columnbrowser', function(Y) {
 			return label;
 		},
 		
+		// this completely sucks :(
 		updateAll : function(params) {
 			var columns = this.get("columns"),
 				activeIndex = this._activeIndex;
-			for (var i=0; i<=activeIndex; i++) {
-				var column = columns[i];
-				if(column.list) {
-					if(params) {
-						listParams = column.list.get("params");
-						for(var key in params) {
-							listParams[key] = params[key];
-						}
-						column.list.set("params", listParams);
+			for (var i=0; i<columns.length; i++) {
+				var column = columns[i],
+					list = column.list,
+					columnParams = list ? list.get("params") : column.params;
+					
+				if(params) {	
+					for(var key in params) {
+						columnParams[key] = params[key];
 					}
-					column.list.updateContent();
+					if(list) {
+						list.set("params", columnParams);
+					}
+					else {
+						column.params = columnParams;
+					}
+				}		
+				if(i<=activeIndex) {
+					list.updateContent();
 				}	
 			}
 		},
