@@ -14,8 +14,8 @@
 :- http_handler(skosapi(concepts), http_concepts, []).
 
 :- multifile
-	conceptscheme_property/3,
-	concept_property/3.
+	cliopatria:conceptscheme_property/3,
+	cliopatria:concept_property/3.
 
 %%	http_concept_schemes(+Request)
 %
