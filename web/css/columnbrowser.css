@@ -49,10 +49,12 @@
 }
 .yui3-columnbrowser .resourcelist-item .count {
 	float: right;
-	background-color: #98A9C6;
-	color: white;
+	background-color: #EEE;
+	color: black;
 	padding: 2px;
-	border-radius: 4px;
+	border-radius: 2px;
+	font-size: 89%;
+	margin-left: 2px;
 }
 .yui3-columnbrowser .resourcelist-item.selected {
 	background-color: #EEE;
