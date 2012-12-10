@@ -182,7 +182,9 @@ conceptscheme_result(Label-URI, json(JSON)) :-
 conceptscheme_result_property(Key, URI, Value) :-
 	catch(cliopatria:conceptscheme_property(Key, URI, Value), _, fail).
 
-%%	concept_results(+Pair:label-uri, +Graphs -JSON_Object)
+%%	concept_results(+Pair, +Graphs -JSON_Object)
+%
+%
 
 concept_results([], _, []).
 concept_results([C|Cs], Graphs, [O|Os]) :-
