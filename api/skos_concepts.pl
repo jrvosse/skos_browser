@@ -15,7 +15,7 @@
 
 :- multifile
 	cliopatria:conceptscheme_property/3,
-	cliopatria:concept_property/3.
+	cliopatria:concept_property/4.
 
 %%	http_concept_schemes(+Request)
 %
