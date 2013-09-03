@@ -1,5 +1,7 @@
 :- module(skos_concepts,
-	  []).
+	  [concept_results/3,
+	   http_concepts/1
+	  ]).
 
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_parameters)).
