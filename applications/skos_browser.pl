@@ -52,7 +52,7 @@ yui_script -->
 js_item_select -->
 	{ http_location_by_id(http_concept_info, URL)
 	},
-	html(['var url = "',URL,'"+"?concept="+e.id;']),
+	html(['var url = "',URL,'"+"?concept="+encodeURIComponent(e.id);']),
 	yui3_load(one(id(detail)), symbol(url)).
 
 skos_api_datasource(DS) -->
