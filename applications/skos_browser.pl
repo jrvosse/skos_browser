@@ -136,10 +136,25 @@ http_concept_info(Request) :-
 	print_html(HTML).
 
 skos_description(C, Desc) :-
-	(   rdf_has(C, skos:scopeNote, Lit)
-	->  literal_text(Lit, Desc)
-	;   Desc = ''
-	).
+	(   rdf_has(C, skos:definition, LitDef)
+	->  literal_text(LitDef, Def),
+	    DefH = div([class(definition)], Def)
+	;   DefH = ''
+	),
+	(   rdf_has(C, skos:notation, LitNot)
+	->  literal_text(LitNot, Not),
+	    NotH = div([class(notation)], Not)
+	;   NotH = ''
+	),
+	(   rdf_has(C, skos:scopeNote, LitScope)
+	->  literal_text(LitScope, Scope),
+	    ScopeH = div([class(scopeNote)], Scope)
+	;   ScopeH = ''
+	),
+	Desc = div([class(descriptions)],
+		   [ NotH, DefH, ScopeH ]
+		  ).
+
 
 skos_alt_labels(C, AltLabels) :-
 	findall(AL, ( rdf_has(C, skos:altLabel, Lit),
@@ -165,14 +180,15 @@ html_info_snippet(URI, Label, Desc, AltLabels, Related) -->
 	html(div(class(infobox),
 		 [ h3([\resource_link(URI, Label)
 		      ]),
-		   div(class(uri), URI),
 		   div(
 		       [ div(class(labels),
 			     \html_label_list(AltLabels)),
 			 div(class(desc), Desc),
 			 div(class(related),
 			     \html_concept_list(Related))
-		       ])
+		       ]),
+		   div(class(uri), a([href(URI)], URI))
+
 		 ])).
 
 html_label_list([]) --> !.
