@@ -8,6 +8,7 @@
 :- use_module(library(yui3_beta)).
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(semweb/rdf_label)).
+:- use_module(library(skos/util)).
 
 :- http_handler(skosbrowser(.), http_skos_browser, []).
 :- http_handler(skosbrowser(concept), http_concept_info, []).
@@ -130,7 +131,7 @@ http_concept_info(Request) :-
 	skos_description(C, Desc),
 	skos_alt_labels(C, AltLabels0),
 	delete(AltLabels0, Label, AltLabels),
-	skos_related_concepts(C, Related),
+	skos_related_labels(C, Related),
 	format('Content-type: text/html~n~n'),
 	phrase(html(\html_info_snippet(C, Label, Desc, AltLabels, Related)), HTML),
 	print_html(HTML).
@@ -163,18 +164,12 @@ skos_alt_labels(C, AltLabels) :-
 		AltLabels0),
 	sort(AltLabels0, AltLabels).
 
-skos_related_concepts(C, Related) :-
+skos_related_labels(C, Related) :-
 	Concept = concept(R, Label),
-	findall(Concept, ( skos_related(C, R),
+	findall(Concept, ( skos_related_concept(C, R),
 			   rdf_display_label(R, Label)
 		    ),
 		Related).
-
-skos_related(C, R) :-
-	rdf_has(C, skos:related, R).
-skos_related(C, R) :-
-	rdf_has(R, skos:related, C),
-	\+ rdf_has(C, skos:related, R).
 
 html_info_snippet(URI, Label, Desc, AltLabels, Related) -->
 	html(div(class(infobox),
