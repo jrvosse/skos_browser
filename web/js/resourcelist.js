@@ -167,13 +167,16 @@ YUI.add('resourcelist', function(Y) {
 			if(options&&options.length>0) {
 				var optionsNode = this.get("contentBox")
 						.appendChild(Node.create('<select class="options"></select>'));
+				var selectedIndex = 0;
 
 				for (var i=0; i < options.length; i++) {
 					var option = options[i],
 						value = option.value,
-						label = option.label ? option.label : value,	
-						selected = option.selected ? 'selected' : '';
-					optionsNode.insert('<option value="'+value+'" '+selected+'>'+label+'</option>');
+						label = option.label ? option.label : value;
+						if (option.selected) selectedIndex = i;
+					optionsNode.insert('<option value="'+value+'">'+label+'</option>');
+					Y.log(selectedIndex);
+					optionsNode.set('selectedIndex', selectedIndex);
 				}
 				optionsNode.on("change", this._optionSelect, this);
 			}
@@ -399,6 +402,9 @@ YUI.add('resourcelist', function(Y) {
 				request:request,
 				callback: {
 					success: function(o) {
+						Y.log(params);
+						Y.log(request);
+						Y.log(o.response);
 						var results = o.response.results,
 							total = o.response.meta
 								? o.response.meta.totalNumberOfResults 
