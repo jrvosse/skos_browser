@@ -175,7 +175,6 @@ YUI.add('resourcelist', function(Y) {
 						label = option.label ? option.label : value;
 						if (option.selected) selectedIndex = i;
 					optionsNode.insert('<option value="'+value+'">'+label+'</option>');
-					Y.log(selectedIndex);
 					optionsNode.set('selectedIndex', selectedIndex);
 				}
 				optionsNode.on("change", this._optionSelect, this);
@@ -402,9 +401,6 @@ YUI.add('resourcelist', function(Y) {
 				request:request,
 				callback: {
 					success: function(o) {
-						Y.log(params);
-						Y.log(request);
-						Y.log(o.response);
 						var results = o.response.results,
 							total = o.response.meta
 								? o.response.meta.totalNumberOfResults 
