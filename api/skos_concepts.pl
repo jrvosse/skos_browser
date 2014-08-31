@@ -1,5 +1,5 @@
 :- module(skos_concepts,
-	  [concept_results/3,
+	  [concept_results/4,
 	   http_concepts/1
 	  ]).
 
@@ -18,7 +18,7 @@
 
 :- multifile
 	cliopatria:conceptscheme_property/3,
-	cliopatria:concept_property/4.
+	cliopatria:concept_property/5.
 
 %%	http_concept_schemes(+Request)
 %
@@ -83,14 +83,15 @@ http_concepts(Request) :-
 				[zero_or_more,
 				 description('Named graph to restrict the concepts by')
 				])
-			]),
+			],
+		       [form_data(ExtraParams)]),
 	%@TBD use Graphs in concept_of
 	findall(Label-Concept, concept_of(Type, Parent, Query, Concept, Label), Concepts),
 	sort(Concepts, Sorted),
 	length(Sorted, Total),
 	list_offset(Sorted, Offset, OffsetResults),
 	list_limit(OffsetResults, Limit, LimitResults, _),
-	concept_results(LimitResults, Graphs, JSONResults),
+	concept_results(LimitResults, Graphs, JSONResults, ExtraParams),
 	reply_json(json([parent=Parent,
 			 offset=Offset,
 			 limit=Limit,
@@ -137,20 +138,21 @@ conceptscheme_result_property(Key, URI, Value) :-
 %
 %
 
-concept_results([], _, []).
-concept_results([C|Cs], Graphs, [O|Os]) :-
-	concept_result(C, Graphs, O),
-	concept_results(Cs, Graphs, Os).
+concept_results([], _, [], _).
+concept_results([C|Cs], Graphs, [O|Os], Options) :-
+	concept_result(C, Graphs, O, Options),
+	concept_results(Cs, Graphs, Os, Options).
 
-concept_result(Label-URI, Graphs, json(JSON)) :-
+concept_result(Label-URI, Graphs, json(JSON), Options) :-
 	JSON = [id=URI, label=Label|More],
-	findall(Key= Value, concept_result_property(Key, URI, Graphs, Value), More).
+	findall(Key= Value,
+		concept_result_property(Key, URI, Graphs, Value, Options), More).
 
-concept_result_property(hasNext, URI, _, Boolean) :-
+concept_result_property(hasNext, URI, _, Boolean, _Options) :-
 	has_narrower(URI, Boolean).
 
-concept_result_property(Key, URI, Graphs, Value) :-
-	catch(cliopatria:concept_property(Key, URI, Graphs, Value), _, fail).
+concept_result_property(Key, URI, Graphs, Value, Options) :-
+	catch(cliopatria:concept_property(Key, URI, Graphs, Value, Options), _, fail).
 
 
 %%	has_narrower(+Concept, -Boolean)
