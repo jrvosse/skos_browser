@@ -159,11 +159,11 @@ concept_result_property(Key, URI, Graphs, Value, Options) :-
 %
 %	Boolean is true when concept has a skos:narrower concept.
 
-has_narrower(Concept, @true) :-
+has_narrower(Concept, @(true)) :-
 	skos_parent_child(Concept, _Child),
 	!.
 
-has_narrower(_, @false).
+has_narrower(_, @(false)).
 
 
 		 /*******************************
